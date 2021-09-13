@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-#include "stagedsync.hpp"
+#include "stages.hpp"
 
 namespace silkworm::stagedsync {
 

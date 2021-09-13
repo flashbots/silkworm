@@ -27,7 +27,7 @@
 #include <silkworm/etl/collector.hpp>
 #include <silkworm/stagedsync/listener_log_index.hpp>
 
-#include "stagedsync.hpp"
+#include "stages.hpp"
 
 namespace silkworm::stagedsync {
 

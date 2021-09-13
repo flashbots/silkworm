@@ -27,7 +27,7 @@
 #include <silkworm/db/storage.hpp>
 #include <silkworm/execution/processor.hpp>
 
-#include "stagedsync.hpp"
+#include "stages.hpp"
 
 namespace silkworm::stagedsync {
 

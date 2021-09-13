@@ -26,7 +26,7 @@
 #include <silkworm/execution/execution.hpp>
 #include <silkworm/trie/vector_root.hpp>
 
-#include "stagedsync.hpp"
+#include "stages.hpp"
 
 TEST_CASE("Prune Execution") {
     using namespace silkworm;

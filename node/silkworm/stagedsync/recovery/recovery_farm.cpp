@@ -322,18 +322,17 @@ StageResult RecoveryFarm::transform_and_fill_batch(const ChainConfig& config, ui
 
     uint32_t tx_id{0};
     for (const auto& transaction : transactions) {
-
         switch (transaction.type) {
             case Transaction::Type::kEip2930:
                 if (!has_berlin) {
-                    SILKWORM_LOG(LogLevel::Error) << "Non legacy transaction type for transaction #" << tx_id << " in block #"
-                                          << block_num << " before Berlin" << std::endl;
+                    SILKWORM_LOG(LogLevel::Error) << "Non legacy transaction type for transaction #" << tx_id
+                                                  << " in block #" << block_num << " before Berlin" << std::endl;
                     return StageResult::kInvalidTransaction;
                 }
             case Transaction::Type::kEip1559:
                 if (!has_london) {
-                    SILKWORM_LOG(LogLevel::Error) << "Non legacy transaction type for transaction #" << tx_id << " in block #"
-                                          << block_num << " before London" << std::endl;
+                    SILKWORM_LOG(LogLevel::Error) << "Non legacy transaction type for transaction #" << tx_id
+                                                  << " in block #" << block_num << " before London" << std::endl;
                     return StageResult::kInvalidTransaction;
                 }
         }
@@ -458,8 +457,8 @@ StageResult RecoveryFarm::fill_canonical_headers(BlockNum from, BlockNum to) noe
         while (data.done) {
             reached_block_num = endian::load_big_u64(static_cast<uint8_t*>(data.key.iov_base));
             if (reached_block_num != expected_block_num) {
-                SILKWORM_LOG(LogLevel::Error) << "Bad block number sequence ! Expected " << expected_block_num << " got "
-                                              << reached_block_num << std::endl;
+                SILKWORM_LOG(LogLevel::Error) << "Bad block number sequence ! Expected " << expected_block_num
+                                              << " got " << reached_block_num << std::endl;
                 return StageResult::kBadChainSequence;
             }
 

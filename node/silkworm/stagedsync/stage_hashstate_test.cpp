@@ -25,7 +25,7 @@
 #include <silkworm/execution/address.hpp>
 #include <silkworm/execution/execution.hpp>
 
-#include "stagedsync.hpp"
+#include "stages.hpp"
 
 TEST_CASE("Stage Hashstate") {
 

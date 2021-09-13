@@ -25,7 +25,7 @@
 #include <silkworm/db/stages.hpp>
 #include <silkworm/db/tables.hpp>
 #include <silkworm/etl/collector.hpp>
-#include <silkworm/stagedsync/stagedsync.hpp>
+#include <silkworm/stagedsync/stages.hpp>
 
 using namespace silkworm;
 

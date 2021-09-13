@@ -29,7 +29,7 @@
 #include <silkworm/types/account.hpp>
 #include <silkworm/types/block.hpp>
 
-#include "stagedsync.hpp"
+#include "stages.hpp"
 
 TEST_CASE("Unwind Execution") {
     using namespace silkworm;

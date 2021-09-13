@@ -24,7 +24,7 @@
 #include <silkworm/db/buffer.hpp>
 #include <silkworm/db/stages.hpp>
 
-#include "stagedsync.hpp"
+#include "stages.hpp"
 
 TEST_CASE("Stage Block Hashes") {
     using namespace evmc::literals;

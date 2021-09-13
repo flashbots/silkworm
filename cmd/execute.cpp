@@ -20,8 +20,8 @@
 #include <silkworm/common/directories.hpp>
 #include <silkworm/common/log.hpp>
 #include <silkworm/db/access_layer.hpp>
-#include <silkworm/stagedsync/stagedsync.hpp>
 #include <silkworm/db/stages.hpp>
+#include <silkworm/stagedsync/stages.hpp>
 
 int main(int argc, char* argv[]) {
     using namespace silkworm;

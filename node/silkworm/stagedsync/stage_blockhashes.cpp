@@ -23,7 +23,7 @@
 #include <silkworm/db/tables.hpp>
 #include <silkworm/etl/collector.hpp>
 
-#include "stagedsync.hpp"
+#include "stages.hpp"
 
 namespace silkworm::stagedsync {
 

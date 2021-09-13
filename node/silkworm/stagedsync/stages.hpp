@@ -29,7 +29,7 @@
 
 namespace silkworm::stagedsync {
 
-using namespace silkworm::stages; // TODO(Andrea) Remove when rename stagedsync namespace to stages
+using namespace silkworm::stages;  // TODO(Andrea) Remove when rename stagedsync namespace to stages
 
 constexpr size_t kDefaultBatchSize = 512_Mebi;
 constexpr size_t kDefaultRecoverySenderBatch = 50'000;  // This a number of transactions not number of bytes
@@ -47,7 +47,8 @@ struct Stage {
 
 // Stage functions
 StageResult stage_headers(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from = 0);
-StageResult stage_blockhashes(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from = 0);
+StageResult stage_blockhashes(db::TransactionManager& txn, const std::filesystem::path& etl_path,
+                              uint64_t prune_from = 0);
 StageResult stage_bodies(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from = 0);
 StageResult stage_senders(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from = 0);
 StageResult stage_execution(db::TransactionManager& txn, const std::filesystem::path& etl_path, size_t batch_size,
@@ -77,14 +78,18 @@ void hashstate_promote_clean_code(mdbx::txn& txn, const std::filesystem::path& e
 void hashstate_promote_clean_state(mdbx::txn& txn, const std::filesystem::path& etl_path);
 
 /* **************************** */
-StageResult stage_hashstate(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from = 0);
-StageResult stage_interhashes(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from = 0);
+StageResult stage_hashstate(db::TransactionManager& txn, const std::filesystem::path& etl_path,
+                            uint64_t prune_from = 0);
+StageResult stage_interhashes(db::TransactionManager& txn, const std::filesystem::path& etl_path,
+                              uint64_t prune_from = 0);
 StageResult stage_account_history(db::TransactionManager& txn, const std::filesystem::path& etl_path,
                                   uint64_t prune_from = 0);
 StageResult stage_storage_history(db::TransactionManager& txn, const std::filesystem::path& etl_path,
                                   uint64_t prune_from = 0);
-StageResult stage_log_index(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from = 0);
-StageResult stage_tx_lookup(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from = 0);
+StageResult stage_log_index(db::TransactionManager& txn, const std::filesystem::path& etl_path,
+                            uint64_t prune_from = 0);
+StageResult stage_tx_lookup(db::TransactionManager& txn, const std::filesystem::path& etl_path,
+                            uint64_t prune_from = 0);
 
 // Unwind functions
 StageResult unwind_blockhashes(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t unwind_to);
@@ -92,18 +97,21 @@ StageResult unwind_senders(db::TransactionManager& txn, const std::filesystem::p
 StageResult unwind_execution(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t unwind_to);
 StageResult unwind_hashstate(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t unwind_to);
 StageResult unwind_interhashes(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t unwind_to);
-StageResult unwind_account_history(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t unwind_to);
-StageResult unwind_storage_history(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t unwind_to);
+StageResult unwind_account_history(db::TransactionManager& txn, const std::filesystem::path& etl_path,
+                                   uint64_t unwind_to);
+StageResult unwind_storage_history(db::TransactionManager& txn, const std::filesystem::path& etl_path,
+                                   uint64_t unwind_to);
 StageResult unwind_log_index(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t unwind_to);
 StageResult unwind_tx_lookup(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t unwind_to);
 // Prune functions
 StageResult prune_senders(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from);
 StageResult prune_execution(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from);
-StageResult prune_account_history(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from);
-StageResult prune_storage_history(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from);
+StageResult prune_account_history(db::TransactionManager& txn, const std::filesystem::path& etl_path,
+                                  uint64_t prune_from);
+StageResult prune_storage_history(db::TransactionManager& txn, const std::filesystem::path& etl_path,
+                                  uint64_t prune_from);
 StageResult prune_log_index(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from);
 StageResult prune_tx_lookup(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from);
-
 
 }  // namespace silkworm::stagedsync
 

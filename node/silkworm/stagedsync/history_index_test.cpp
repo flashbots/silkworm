@@ -27,7 +27,7 @@
 #include <silkworm/execution/address.hpp>
 #include <silkworm/execution/execution.hpp>
 
-#include "stagedsync.hpp"
+#include "stages.hpp"
 
 using namespace evmc::literals;
 using namespace silkworm;
