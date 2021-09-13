@@ -27,26 +27,6 @@ see its package dbutils.
 
 namespace silkworm::stagedsync {
 
-// clang-format off
-enum class [[nodiscard]] StageResult {
-    kSuccess,
-    kUnknownChainId,
-    kBadBlockHash,
-    kBadChainSequence,
-    kInvalidRange,
-    kInvalidProgress,
-    kInvalidBlock,
-    kInvalidTransaction,
-    kMissingSenders,
-    kDecodingError,
-    kUnexpectedError,
-    kUnknownError,
-    kDbError,
-    kAborted,
-};
-// clang-format on
-
-void success_or_throw(StageResult code);
 
 // Convert changesets key and value pair to plain state format
 std::pair<Bytes, Bytes> convert_to_db_format(const ByteView& key, const ByteView& value);

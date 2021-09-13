@@ -383,11 +383,12 @@ void do_prunings(db::EnvConfig& config, uint64_t prune_size) {
     auto prune_from{current_progress - prune_size};
 
     std::cout << "\n Pruned start, block to be kept: " << prune_size << "\n" << std::endl;
-    auto pruned_node_stages{stagedsync::get_pruned_node_stages()};
-    for (auto stage : pruned_node_stages) {
-        stagedsync::success_or_throw(
-            stage.prune_func(txn, DataDirectory::from_chaindata(config.path).etl().path(), prune_from));
-    }
+    // TODO(Andrea) reactivate later when stages are defined
+    //    auto pruned_node_stages{stagedsync::get_pruned_node_stages()};
+    //    for (auto stage : pruned_node_stages) {
+    //        stagedsync::success_or_throw(
+    //            stage.prune_func(txn, DataDirectory::from_chaindata(config.path).etl().path(), prune_from));
+    //    }
 }
 
 void do_migrations(db::EnvConfig& config) {

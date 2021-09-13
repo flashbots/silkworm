@@ -16,20 +16,8 @@
 #include "util.hpp"
 
 #include <memory>
-#include <stdexcept>
-
-#include <magic_enum.hpp>
-
-#include <silkworm/db/util.hpp>
 
 namespace silkworm::stagedsync {
-
-void success_or_throw(StageResult code) {
-    if (code != StageResult::kSuccess) {
-        std::string error{magic_enum::enum_name<StageResult>(code)};
-        throw std::runtime_error(error);
-    }
-}
 
 std::pair<Bytes, Bytes> convert_to_db_format(const ByteView& key, const ByteView& value) {
     if (key.size() == 8) {

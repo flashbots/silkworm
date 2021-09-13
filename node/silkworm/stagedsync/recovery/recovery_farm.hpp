@@ -21,10 +21,12 @@
 #include <queue>
 
 #include <silkworm/etl/collector.hpp>
+#include <silkworm/stagedsync/common.hpp>
 #include <silkworm/stagedsync/recovery/recovery_worker.hpp>
-#include <silkworm/stagedsync/util.hpp>
 
 namespace silkworm::stagedsync::recovery {
+
+using namespace silkworm::stages; // TODO(Andrea) Remove when rename stagedsync namespace to stages
 
 //! \brief A class to orchestrate the work of multiple recoverers
 class RecoveryFarm {

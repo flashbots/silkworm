@@ -25,7 +25,11 @@
 #include <silkworm/db/tables.hpp>
 #include <silkworm/stagedsync/util.hpp>
 
+#include "common.hpp"
+
 namespace silkworm::stagedsync {
+
+using namespace silkworm::stages; // TODO(Andrea) Remove when rename stagedsync namespace to stages
 
 constexpr size_t kDefaultBatchSize = 512_Mebi;
 constexpr size_t kDefaultRecoverySenderBatch = 50'000;  // This a number of transactions not number of bytes
@@ -100,9 +104,6 @@ StageResult prune_storage_history(db::TransactionManager& txn, const std::filesy
 StageResult prune_log_index(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from);
 StageResult prune_tx_lookup(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from);
 
-std::vector<Stage> get_archive_node_stages();
-std::vector<Stage> get_pruned_node_stages();
-std::vector<Stage> get_miner_mode_stages();
 
 }  // namespace silkworm::stagedsync
 

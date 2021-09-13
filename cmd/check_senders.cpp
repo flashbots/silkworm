@@ -35,6 +35,7 @@
 #include <silkworm/db/stages.hpp>
 #include <silkworm/db/util.hpp>
 #include <silkworm/etl/collector.hpp>
+#include <silkworm/stagedsync/common.hpp>
 #include <silkworm/stagedsync/recovery/recovery_farm.hpp>
 #include <silkworm/types/block.hpp>
 
@@ -114,7 +115,7 @@ int main(int argc, char* argv[]) {
         auto env{db::open_env(db_config)};
         auto txn{env.start_write()};
 
-        stagedsync::StageResult result{stagedsync::StageResult::kSuccess};
+        stages::StageResult result{stages::StageResult::kSuccess};
 
         signal(SIGINT, sig_handler);
         signal(SIGTERM, sig_handler);
