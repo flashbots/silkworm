@@ -88,7 +88,7 @@ void write_stage_unwind_progress(mdbx::txn& txn, const char* stage_name, BlockNu
 
 bool is_known_stage(const char* name) {
     if (strlen(name)) {
-        for (auto stage : kAllStages) {
+        for (auto stage : kForwardStages) {
             if (strcmp(stage, name) == 0) {
                 return true;
             }

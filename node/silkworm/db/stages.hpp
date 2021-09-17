@@ -50,46 +50,69 @@ constexpr const char* kMiningFinishKey{"MiningFinish"};               // Mining 
 // clang-format on
 
 //! \brief List of all known stages
-constexpr const char* kAllStages[]{
+//! \remarks The order of this list reflects the order of execution for a complete forward sync cycle
+constexpr const char* kForwardStages[]{
     kHeadersKey,
     kBlockHashesKey,
     kBlockBodiesKey,
+    /* Stages below don't use Internet */
     kSendersKey,
     kExecutionKey,
     kTranslationKey,
-    kIntermediateHashesKey,
     kHashStateKey,
+    kIntermediateHashesKey,
+    kCallTracesKey,
     kAccountHistoryIndexKey,
     kStorageHistoryIndexKey,
     kLogIndexKey,
-    kCallTracesKey,
     kTxLookupKey,
     kTxPoolKey,
     kFinishKey,
 };
 
+//! \brief List of stages keys in their unwind order.
+//! \remarks The order of this list reflects the order of execution for a unwind or prune cycle
+constexpr const char* kReverseStages[]{
+    kFinishKey,
+    kTxLookupKey,
+    kLogIndexKey,
+    kStorageHistoryIndexKey,
+    kAccountHistoryIndexKey,
+    kCallTracesKey,
+    kHashStateKey,  // Unwinding of IHashes needs to happen after unwinding HashState
+    kIntermediateHashesKey,
+    kTranslationKey,
+    kExecutionKey,
+    kSendersKey,
+    kTxPoolKey,  // Unwinding of tx pool (re-injecting transactions into the pool needs to happen after unwinding
+                 // execution). Also tx pool is before senders because senders unwind is inside cycle transaction */
+    kBlockBodiesKey,
+    kBlockHashesKey,
+    kHeadersKey,
+};
+
 //! \brief Reads from db the progress (block height) of the provided stage name
 //! \param [in] txn : a reference to a ro/rw db transaction
-//! \param [in] stage_name : the name of the requested stage (must be known see kAllStages[])
+//! \param [in] stage_name : the name of the requested stage (must be known see kForwardStages[])
 //! \return The actual chain height (BlockNum) the stage has reached
 BlockNum read_stage_progress(mdbx::txn& txn, const char* stage_name);
 
 //! \brief Reads from db the prune progress (block height) of the provided stage name
 //! \param [in] txn : a reference to a ro/rw db transaction
-//! \param [in] stage_name : the name of the requested stage (must be known see kAllStages[])
+//! \param [in] stage_name : the name of the requested stage (must be known see kForwardStages[])
 //! \return The actual chain height (BlockNum) the stage has pruned its data up to
 //! \remarks A pruned height X means the prune stage function has run up to this block
 BlockNum read_stage_prune_progress(mdbx::txn& txn, const char* stage_name);
 
 //! \brief Writes into db the progress (block height) for the provided stage name
 //! \param [in] txn : a reference to a rw db transaction
-//! \param [in] stage_name : the name of the involved stage (must be known see kAllStages[])
+//! \param [in] stage_name : the name of the involved stage (must be known see kForwardStages[])
 //! \param [in] block_num : the actual chain height (BlockNum) the stage must record
 void write_stage_progress(mdbx::txn& txn, const char* stage_name, BlockNum block_num);
 
 //! \brief Writes into db the prune progress (block height) for the provided stage name
 //! \param [in] txn : a reference to a rw db transaction
-//! \param [in] stage_name : the name of the involved stage (must be known see kAllStages[])
+//! \param [in] stage_name : the name of the involved stage (must be known see kForwardStages[])
 //! \param [in] block_num : the actual chain height (BlockNum) the stage must record
 //! \remarks A pruned height X means the prune stage function has run up to this block
 void write_stage_prune_progress(mdbx::txn& txn, const char* stage_name, BlockNum block_num);
@@ -97,7 +120,7 @@ void write_stage_prune_progress(mdbx::txn& txn, const char* stage_name, BlockNum
 //! \brief Reads from db the invalidation point (block height) of provided stage name. Invalidation point means that
 //! that stage needs to roll back to the invalidation point and re-execute its work for subsequent blocks (if any)
 //! \param [in] txn : a reference to a ro/rw db transaction
-//! \param [in] stage_name : the name of the requested stage (must be known see kAllStages[])
+//! \param [in] stage_name : the name of the requested stage (must be known see kForwardStages[])
 //! \return The invalidation point
 //! \remarks An invalidation point == 0 means there is no invalidation point. BlockNum 0 is the genesis and you can't
 //! unwind it
@@ -105,14 +128,14 @@ BlockNum read_stage_unwind_progress(mdbx::txn& txn, const char* stage_name);
 
 //! \brief Writes into db the invalidation point (block height) for the provided stage name
 //! \param [in] txn : a reference to a rw db transaction
-//! \param [in] stage_name : the name of the involved stage (must be known see kAllStages[])
+//! \param [in] stage_name : the name of the involved stage (must be known see kForwardStages[])
 //! \param [in] block_num : the actual chain invalidation point (BlockNum) the stage must record. If omitted the value
 //! defaults to 0 which means to clear any previously recorded invalidation point.
 void write_stage_unwind_progress(mdbx::txn& txn, const char* stage_name, BlockNum block_num = 0);
 
 //! \brief Whether the provided stage name is known to Silkworm
 //! \param [in] stage_name : The name of the stage to check for
-//! \return Whether it exists in kAllStages[]
+//! \return Whether it exists in kForwardStages[]
 bool is_known_stage(const char* stage_name);
 
 }  // namespace silkworm::db::stages

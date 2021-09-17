@@ -22,6 +22,8 @@
 #include <filesystem>
 #include <vector>
 
+#include <silkworm/db/stages.hpp>
+#include <silkworm/db/storage.hpp>
 #include <silkworm/db/tables.hpp>
 #include <silkworm/stagedsync/util.hpp>
 
@@ -34,21 +36,30 @@ using namespace silkworm::stages;  // TODO(Andrea) Remove when rename stagedsync
 constexpr size_t kDefaultBatchSize = 512_Mebi;
 constexpr size_t kDefaultRecoverySenderBatch = 50'000;  // This a number of transactions not number of bytes
 
-typedef StageResult (*StageFunc)(db::TransactionManager&, const std::filesystem::path& etl_path, uint64_t prune_from);
+typedef StageResult (*ForwardFunc)(db::TransactionManager&, const std::filesystem::path& etl_path, uint64_t prune_from);
 typedef StageResult (*UnwindFunc)(db::TransactionManager&, const std::filesystem::path& etl_path, uint64_t unwind_to);
 typedef StageResult (*PruneFunc)(db::TransactionManager&, const std::filesystem::path& etl_path, uint64_t prune_from);
 
+
+/* Refactor below */
+
 struct Stage {
-    StageFunc stage_func;
-    UnwindFunc unwind_func;
-    PruneFunc prune_func;
-    uint64_t id;
+    std::string description;           // A string shown in the logs
+    bool disabled;                     // Whether it should be executed
+    std::string disabled_description;  // Reason for the stage being disabled
+
+    //! \brief Forward is called when the stage is executed. The main logic of the stage should be here.
+    ForwardFunc forward;
+    //! \brief Unwind is called when the stage should be unwound. The unwind logic should be there.
+    UnwindFunc unwind;
+    //! \brief Prune is called when the stage data should be deleted. The pruning logic should be there.
+    PruneFunc prune;
+    //! \brief Unique identifier of the stage. Should be > 0
+    uint32_t id;
 };
 
 // Stage functions
 StageResult stage_headers(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from = 0);
-StageResult stage_blockhashes(db::TransactionManager& txn, const std::filesystem::path& etl_path,
-                              uint64_t prune_from = 0);
 StageResult stage_bodies(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from = 0);
 StageResult stage_senders(db::TransactionManager& txn, const std::filesystem::path& etl_path, uint64_t prune_from = 0);
 StageResult stage_execution(db::TransactionManager& txn, const std::filesystem::path& etl_path, size_t batch_size,

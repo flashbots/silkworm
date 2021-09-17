@@ -96,6 +96,12 @@ std::string human_size(uint64_t bytes);
 // Compares two strings for equality with case insensitivity
 bool iequals(const std::string& a, const std::string& b);
 
+//! \brief Implements string comparison for char* ptrs
+//! \remarks Useful when using char* as key in maps
+struct str_compare {
+    bool operator()(const char* ptr_a, const char* ptr_b) const { return std::strcmp(ptr_a, ptr_b) < 0; }
+};
+
 // TODO[C++20] replace by starts_with
 inline bool has_prefix(ByteView s, ByteView prefix) { return s.substr(0, prefix.size()) == prefix; }
 

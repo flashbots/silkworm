@@ -55,7 +55,7 @@ constexpr db::MapConfig kHashedAccounts{"HashedAccount"};
 constexpr db::MapConfig kHashedStorage{"HashedStorage", ::mdbx::key_mode::usual, ::mdbx::value_mode::multi};
 constexpr db::MapConfig kHeadBlock{"LastBlock"};
 constexpr db::MapConfig kHeadHeader{"LastHeader"};
-constexpr db::MapConfig kHeaderNumbers{"HeaderNumber"};
+constexpr db::MapConfig kHeaderNumbers{"HeaderNumber"};  // header_hash -> block_num_u64 (BE)
 constexpr db::MapConfig kHeadersSnapshotInfo{"HeadersSnapshotInfo"};
 constexpr db::MapConfig kIncarnationMap{"IncarnationMap"};
 constexpr db::MapConfig kLogAddressIndex{"LogAddressIndex"};

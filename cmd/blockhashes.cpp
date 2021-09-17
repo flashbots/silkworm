@@ -22,8 +22,6 @@
 #include <silkworm/common/directories.hpp>
 #include <silkworm/common/log.hpp>
 #include <silkworm/db/access_layer.hpp>
-#include <silkworm/db/stages.hpp>
-#include <silkworm/db/tables.hpp>
 #include <silkworm/etl/collector.hpp>
 #include <silkworm/stagedsync/stages.hpp>
 
@@ -45,8 +43,10 @@ int main(int argc, char* argv[]) {
         db::EnvConfig db_config{data_dir.chaindata().path().string()};
         auto env{db::open_env(db_config)};
         db::TransactionManager tm{env};
-        auto result_code{stagedsync::stage_blockhashes(tm, data_dir.etl().path())};
-        success_or_throw(result_code);
+        // TODO(Andrea) re-enable
+        //        stagedsync::StageBlockHashes(1).forward(tm, data_dir.etl.path());
+        //        auto result_code{stagedsync::stage_blockhashes(tm, data_dir.etl().path())};
+        //        stages::success_or_throw(result_code);
     } catch (const std::exception& ex) {
         SILKWORM_LOG(LogLevel::Error) << ex.what() << std::endl;
         return -5;
