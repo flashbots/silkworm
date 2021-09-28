@@ -21,6 +21,7 @@
 #include <silkworm/common/endian.hpp>
 #include <silkworm/common/log.hpp>
 #include <silkworm/common/stopwatch.hpp>
+#include <silkworm/consensus/engine.hpp>
 #include <silkworm/db/access_layer.hpp>
 #include <silkworm/db/buffer.hpp>
 #include <silkworm/db/stages.hpp>
@@ -40,14 +41,17 @@ static StageResult execute_batch_of_blocks(mdbx::txn& txn, const ChainConfig& co
         AnalysisCache analysis_cache;
         ExecutionStatePool state_pool;
         std::vector<Receipt> receipts;
-
+        auto consensus_engine{consensus::engine_factory(config)};
+        if (!consensus_engine) {
+            return StageResult::kUnknownConsensusEngine;
+        }
         while (true) {
             std::optional<BlockWithHash> bh{db::read_block(txn, block_num, /*read_senders=*/true)};
-            if (!bh) {
+            if (bh == std::nullopt) {
                 return StageResult::kBadChainSequence;
             }
 
-            ExecutionProcessor processor{bh->block, buffer, config};
+            ExecutionProcessor processor{bh->block, *consensus_engine, buffer, config};
             processor.evm().advanced_analysis_cache = &analysis_cache;
             processor.evm().state_pool = &state_pool;
 
@@ -277,11 +281,11 @@ StageResult unwind_execution(db::TransactionManager& txn, const std::filesystem:
 
 StageResult prune_execution(db::TransactionManager& txn, const std::filesystem::path&, uint64_t prune_from) {
     static const db::MapConfig prune_tables[] = {
-        db::table::kPlainAccountChangeSet,  //
-        db::table::kPlainStorageChangeSet,  //
-        db::table::kBlockReceipts,          //
-        db::table::kCallTraceSet,           //
-        db::table::kLogs                    //
+        db::table::kAccountChangeSet,  //
+        db::table::kStorageChangeSet,  //
+        db::table::kBlockReceipts,     //
+        db::table::kCallTraceSet,      //
+        db::table::kLogs               //
     };
 
     try {

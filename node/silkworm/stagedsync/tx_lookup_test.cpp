@@ -17,11 +17,9 @@
 #include <catch2/catch.hpp>
 #include <ethash/keccak.hpp>
 
-#include <silkworm/chain/config.hpp>
 #include <silkworm/common/directories.hpp>
-#include <silkworm/db/buffer.hpp>
-#include <silkworm/execution/execution.hpp>
 #include <silkworm/common/test_util.hpp>
+#include <silkworm/execution/execution.hpp>
 
 using namespace evmc::literals;
 
@@ -46,7 +44,7 @@ TEST_CASE("Stage Transaction Lookups") {
     auto transaction_table{db::open_cursor(*txn, db::table::kEthTx)};
 
     db::detail::BlockBodyForStorage block{};
-    auto transactions{test_util::sample_transactions()};
+    auto transactions{test::sample_transactions()};
     block.base_txn_id = 1;
     block.txn_count = 1;
     // ---------------------------------------

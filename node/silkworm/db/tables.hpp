@@ -30,7 +30,7 @@ namespace silkworm::db::table {
 constexpr const char* kLastHeaderKey = "LastHeader";
 
 /* Canonical tables */
-constexpr db::MapConfig kMAIN_DBI{nullptr};
+constexpr db::MapConfig kAccountChangeSet{"AccountChangeSet", ::mdbx::key_mode::usual, ::mdbx::value_mode::multi};
 constexpr db::MapConfig kAccountHistory{"AccountHistory"};
 constexpr db::MapConfig kBlockBodies{"BlockBody"};
 
@@ -62,14 +62,13 @@ constexpr db::MapConfig kLogAddressIndex{"LogAddressIndex"};
 constexpr db::MapConfig kLogTopicIndex{"LogTopicIndex"};
 constexpr db::MapConfig kLogs{"TransactionLog"};
 constexpr db::MapConfig kMigrations{"Migration"};
-constexpr db::MapConfig kPlainAccountChangeSet{"AccountChangeSet", ::mdbx::key_mode::usual, ::mdbx::value_mode::multi};
 constexpr db::MapConfig kPlainContractCode{"PlainCodeHash"};
 constexpr db::MapConfig kPlainState{"PlainState", ::mdbx::key_mode::usual, ::mdbx::value_mode::multi};
-constexpr db::MapConfig kPlainStorageChangeSet{"StorageChangeSet", ::mdbx::key_mode::usual, ::mdbx::value_mode::multi};
 constexpr db::MapConfig kSenders{"TxSender"};
 constexpr db::MapConfig kSequence{"Sequence"};
 constexpr db::MapConfig kSnapshotInfo{"SnapshotInfo"};
 constexpr db::MapConfig kStateSnapshotInfo{"StateSnapshotInfo"};
+constexpr db::MapConfig kStorageChangeSet{"StorageChangeSet", ::mdbx::key_mode::usual, ::mdbx::value_mode::multi};
 constexpr db::MapConfig kStorageHistory{"StorageHistory"};
 constexpr db::MapConfig kSyncStageProgress{"SyncStage"};      // Progress for stages
 constexpr db::MapConfig kSyncStageUnwind{"SyncStageUnwind"};  // Unwind point for stages
@@ -78,6 +77,7 @@ constexpr db::MapConfig kTrieOfStorage{"TrieStorage"};
 constexpr db::MapConfig kTxLookup{"BlockTransactionLookup"};
 
 constexpr db::MapConfig kTables[]{
+    kAccountChangeSet,
     kAccountHistory,
     kBlockBodies,
     kBlockReceipts,
@@ -107,14 +107,13 @@ constexpr db::MapConfig kTables[]{
     kLogTopicIndex,
     kLogs,
     kMigrations,
-    kPlainAccountChangeSet,
     kPlainContractCode,
     kPlainState,
-    kPlainStorageChangeSet,
     kSenders,
     kSequence,
     kSnapshotInfo,
     kStateSnapshotInfo,
+    kStorageChangeSet,
     kStorageHistory,
     kSyncStageProgress,
     kSyncStageUnwind,
@@ -125,9 +124,6 @@ constexpr db::MapConfig kTables[]{
 
 // Create all tables that do not yet exist.
 void create_all(mdbx::txn& txn);
-
-// Gets table config given its name
-std::optional<db::MapConfig> get_config(std::string name);
 
 }  // namespace silkworm::db::table
 

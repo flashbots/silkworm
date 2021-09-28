@@ -32,12 +32,15 @@
 
 #include "address.hpp"
 #include "precompiled.hpp"
-#include "state_pool.hpp"
 
 namespace silkworm {
 
 EVM::EVM(const Block& block, IntraBlockState& state, const ChainConfig& config) noexcept
-    : block_{block}, state_{state}, config_{config}, evm1_{evmc_create_evmone()} {}
+    : beneficiary{block.header.beneficiary},
+      block_{block},
+      state_{state},
+      config_{config},
+      evm1_{evmc_create_evmone()} {}
 
 EVM::~EVM() { evm1_->destroy(evm1_); }
 
@@ -54,7 +57,7 @@ CallResult EVM::execute(const Transaction& txn, uint64_t gas) noexcept {
         0,                                            // flags
         0,                                            // depth
         static_cast<int64_t>(gas),                    // gas
-        destination,                                  // destination
+        destination,                                  // recipient
         *txn.from,                                    // sender
         &txn.data[0],                                 // input_data
         txn.data.size(),                              // input_size
@@ -114,7 +117,7 @@ evmc::result EVM::create(const evmc_message& message) noexcept {
         0,               // flags
         message.depth,   // depth
         message.gas,     // gas
-        contract_addr,   // destination
+        contract_addr,   // recipient
         message.sender,  // sender
         nullptr,         // input_data
         0,               // input_size
@@ -176,10 +179,10 @@ evmc::result EVM::call(const evmc_message& message) noexcept {
         if (message.flags & EVMC_STATIC) {
             // Match geth logic
             // https://github.com/ethereum/go-ethereum/blob/v1.9.25/core/vm/evm.go#L391
-            state_.touch(message.destination);
+            state_.touch(message.recipient);
         } else {
             state_.subtract_from_balance(message.sender, value);
-            state_.add_to_balance(message.destination, value);
+            state_.add_to_balance(message.recipient, value);
         }
     }
 
@@ -365,14 +368,15 @@ evmc_storage_status EvmHost::set_storage(const evmc::address& address, const evm
         return EVMC_STORAGE_MODIFIED;
     }
 
-    uint64_t sload_cost{0};
-    if (rev >= EVMC_BERLIN) {
-        sload_cost = fee::kWarmStorageReadCost;
-    } else if (rev >= EVMC_ISTANBUL) {
-        sload_cost = fee::kGSLoadIstanbul;
-    } else {
-        sload_cost = fee::kGSLoadTangerineWhistle;
-    }
+    const uint64_t sload_cost{[rev]() {
+        if (rev >= EVMC_BERLIN) {
+            return fee::kWarmStorageReadCost;
+        } else if (rev >= EVMC_ISTANBUL) {
+            return fee::kGSLoadIstanbul;
+        } else {
+            return fee::kGSLoadTangerineWhistle;
+        }
+    }()};
 
     uint64_t sstore_reset_gas{fee::kGSReset};
     if (rev >= EVMC_BERLIN) {
@@ -475,7 +479,7 @@ evmc_tx_context EvmHost::get_tx_context() const noexcept {
     const intx::uint256 effective_gas_price{evm_.txn_->effective_gas_price(base_fee_per_gas)};
     intx::be::store(context.tx_gas_price.bytes, effective_gas_price);
     context.tx_origin = *evm_.txn_->from;
-    context.block_coinbase = header.beneficiary;
+    context.block_coinbase = evm_.beneficiary;
     assert(header.number <= INT64_MAX);  // EIP-1985
     context.block_number = static_cast<int64_t>(header.number);
     assert(header.timestamp <= INT64_MAX);  // EIP-1985

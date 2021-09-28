@@ -21,7 +21,6 @@
 #include <absl/container/btree_set.h>
 
 #include <silkworm/common/endian.hpp>
-#include <silkworm/common/util.hpp>
 #include <silkworm/types/log_cbor.hpp>
 #include <silkworm/types/receipt_cbor.hpp>
 
@@ -69,7 +68,7 @@ void Buffer::update_account(const evmc::address& address, std::optional<Account>
 
     if (accounts_.insert_or_assign(address, current).second) {
         bump_batch_size(kAddressLength, current ? current->encoding_length_for_storage() : 0);
-    };
+    }
 
     if (account_deleted && initial->incarnation) {
         if (incarnations_.insert_or_assign(address, initial->incarnation).second) {
@@ -176,7 +175,7 @@ void Buffer::write_to_db() {
         code_hash_table.upsert(to_slice(entry.first), to_slice(full_view(entry.second)));
     }
 
-    auto account_change_table{db::open_cursor(txn_, table::kPlainAccountChangeSet)};
+    auto account_change_table{db::open_cursor(txn_, table::kAccountChangeSet)};
     Bytes change_key;
     for (const auto& block_entry : account_changes_) {
         uint64_t block_num{block_entry.first};
@@ -188,7 +187,7 @@ void Buffer::write_to_db() {
         }
     }
 
-    auto storage_change_table{db::open_cursor(txn_, table::kPlainStorageChangeSet)};
+    auto storage_change_table{db::open_cursor(txn_, table::kStorageChangeSet)};
     for (const auto& block_entry : storage_changes_) {
         uint64_t block_num{block_entry.first};
 

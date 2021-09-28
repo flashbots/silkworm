@@ -893,7 +893,7 @@ void do_init_genesis(DataDirectory& data_dir, const std::string&& json_file, uin
 
         trie::HashBuilder hb;
         for (const auto& [hash, rlp] : account_rlp) {
-            hb.add(full_view(hash), rlp);
+            hb.add_leaf(trie::unpack_nibbles(full_view(hash)), rlp);
         }
         state_root_hash = hb.root_hash();
     }

@@ -20,6 +20,7 @@
 #include <silkworm/chain/config.hpp>
 #include <silkworm/chain/protocol_param.hpp>
 #include <silkworm/common/directories.hpp>
+#include <silkworm/common/test_util.hpp>
 #include <silkworm/db/buffer.hpp>
 #include <silkworm/db/stages.hpp>
 #include <silkworm/execution/address.hpp>
@@ -86,8 +87,7 @@ TEST_CASE("Prune Execution") {
     // ---------------------------------------
     // Execute first block
     // ---------------------------------------
-    REQUIRE(execute_block(block, buffer, kLondonTestConfig) == ValidationResult::kOk);
-
+    REQUIRE(execute_block(block, buffer, test::kLondonConfig) == ValidationResult::kOk);
     auto contract_address{create_address(sender, /*nonce=*/0)};
 
     // ---------------------------------------
@@ -109,7 +109,7 @@ TEST_CASE("Prune Execution") {
     block.transactions[0].data = *from_hex(new_val);
     block.transactions[0].max_priority_fee_per_gas = 20 * kGiga;
 
-    REQUIRE(execute_block(block, buffer, kLondonTestConfig) == ValidationResult::kOk);
+    REQUIRE(execute_block(block, buffer, test::kLondonConfig) == ValidationResult::kOk);
 
     // ---------------------------------------
     // Execute third block
@@ -123,15 +123,15 @@ TEST_CASE("Prune Execution") {
     block.transactions[0].nonce = 2;
     block.transactions[0].data = *from_hex(new_val);
 
-    REQUIRE(execute_block(block, buffer, kLondonTestConfig) == ValidationResult::kOk);
+    REQUIRE(execute_block(block, buffer, test::kLondonConfig) == ValidationResult::kOk);
     REQUIRE_NOTHROW(db::stages::write_stage_progress(*txn, db::stages::kExecutionKey, 3));
 
     SECTION("Without prune function") {
         // We keep chain from Block 2 onwards (Aka, we delete block 1 changesets and receipts)
         buffer.write_to_db();
 
-        auto account_changeset_table{db::open_cursor(*txn, db::table::kPlainAccountChangeSet)};
-        auto storage_changeset_table{db::open_cursor(*txn, db::table::kPlainStorageChangeSet)};
+        auto account_changeset_table{db::open_cursor(*txn, db::table::kAccountChangeSet)};
+        auto storage_changeset_table{db::open_cursor(*txn, db::table::kStorageChangeSet)};
         // Check whether we start from Block 2 and not block 1
         auto account_changeset_tail{db::from_slice(account_changeset_table.to_first().key)};
         auto storage_changeset_tail{db::from_slice(storage_changeset_table.to_first().key)};
@@ -145,8 +145,8 @@ TEST_CASE("Prune Execution") {
         // We prune from block 2, thus we delete block 1
         REQUIRE_NOTHROW(stagedsync::success_or_throw(stagedsync::prune_execution(txn, data_dir.etl().path(), 2)));
 
-        auto account_changeset_table{db::open_cursor(*txn, db::table::kPlainAccountChangeSet)};
-        auto storage_changeset_table{db::open_cursor(*txn, db::table::kPlainStorageChangeSet)};
+        auto account_changeset_table{db::open_cursor(*txn, db::table::kAccountChangeSet)};
+        auto storage_changeset_table{db::open_cursor(*txn, db::table::kStorageChangeSet)};
         // Check whether we start from Block 2 and not block 1
         auto account_changeset_tail{db::from_slice(account_changeset_table.to_first().key)};
         auto storage_changeset_tail{db::from_slice(storage_changeset_table.to_first().key)};
