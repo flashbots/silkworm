@@ -214,7 +214,7 @@ evmc::bytes32 DbTrieLoader::calculate_root(const PrefixSet& changed) {
             if (acc_trie.key().has_value() && acc_trie.key().value() < unpacked_key) {
                 break;
             }
-            const auto [account, err]{decode_account_from_storage(db::from_slice(a.value))};
+            const auto [account, err]{decode_account_from_storage(db::from_slice(acc.value))};
             rlp::success_or_throw(err);
 
             evmc::bytes32 storage_root{kEmptyRoot};
@@ -297,7 +297,7 @@ static void changed_accounts(mdbx::txn& txn, BlockNum from, PrefixSet& out) {
 
     auto change_cursor{db::open_cursor(txn, db::table::kAccountChangeSet)};
     change_cursor.lower_bound(db::to_slice(starting_key), /*throw_notfound=*/false);
-    db::for_each(change_cursor, [&out](mdbx::cursor::move_result& entry) {
+    db::cursor_for_each(change_cursor, [&out](mdbx::cursor&, mdbx::cursor::move_result& entry) -> bool {
         const ByteView address{db::from_slice(entry.value).substr(0, kAddressLength)};
         const auto hashed_address{keccak256(address)};
         out.insert(ByteView{hashed_address.bytes, kHashLength});

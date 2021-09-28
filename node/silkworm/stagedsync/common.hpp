@@ -31,25 +31,24 @@
 
 namespace silkworm::stages {
 
-// clang-format off
-enum class [[nodiscard]] StageResult {
-    kSuccess,
-    kUnknownChainId,
-    kBadBlockHash,
-    kBadChainSequence,
-    kInvalidRange,
-    kInvalidProgress,
-    kInvalidBlock,
-    kInvalidTransaction,
-    kMissingSenders,
-    kDecodingError,
-    kUnexpectedError,
-    kUnknownError,
-    kDbError,
-    kAborted,
-    kNotImplemented
+enum class [[nodiscard]] StageResult{
+    kSuccess,                 //
+    kUnknownChainId,          //
+    kUnknownConsensusEngine,  //
+    kBadBlockHash,            //
+    kBadChainSequence,        //
+    kInvalidRange,            //
+    kInvalidProgress,         //
+    kInvalidBlock,            //
+    kInvalidTransaction,      //
+    kMissingSenders,          //
+    kDecodingError,           //
+    kUnexpectedError,         //
+    kUnknownError,            //
+    kDbError,                 //
+    kAborted,                 //
+    kNotImplemented           //
 };
-// clang-format on
 
 //! \brief Stage execution exception
 class StageError : public std::exception {

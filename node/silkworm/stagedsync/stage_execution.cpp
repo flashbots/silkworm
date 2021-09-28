@@ -230,13 +230,13 @@ StageResult unwind_execution(db::TransactionManager& txn, const std::filesystem:
     SILKWORM_LOG(LogLevel::Info) << "Unwind Execution from " << execution_progress << " to " << unwind_to << std::endl;
 
     static const db::MapConfig unwind_tables[7] = {
-        db::table::kPlainState,             //
-        db::table::kPlainContractCode,      //
-        db::table::kPlainAccountChangeSet,  //
-        db::table::kPlainStorageChangeSet,  //
-        db::table::kBlockReceipts,          //
-        db::table::kLogs,                   //
-        db::table::kCallTraceSet            //
+        db::table::kPlainState,         //
+        db::table::kPlainContractCode,  //
+        db::table::kAccountChangeSet,   //
+        db::table::kStorageChangeSet,   //
+        db::table::kBlockReceipts,      //
+        db::table::kLogs,               //
+        db::table::kCallTraceSet        //
     };
 
     try {
@@ -249,8 +249,8 @@ StageResult unwind_execution(db::TransactionManager& txn, const std::filesystem:
             {
                 auto plain_state_table{db::open_cursor(*txn, db::table::kPlainState)};
                 auto plain_code_table{db::open_cursor(*txn, db::table::kPlainContractCode)};
-                auto account_changeset_table{db::open_cursor(*txn, db::table::kPlainAccountChangeSet)};
-                auto storage_changeset_table{db::open_cursor(*txn, db::table::kPlainStorageChangeSet)};
+                auto account_changeset_table{db::open_cursor(*txn, db::table::kAccountChangeSet)};
+                auto storage_changeset_table{db::open_cursor(*txn, db::table::kStorageChangeSet)};
                 unwind_state_from_changeset(account_changeset_table, plain_state_table, plain_code_table, unwind_to);
                 unwind_state_from_changeset(storage_changeset_table, plain_state_table, plain_code_table, unwind_to);
             }

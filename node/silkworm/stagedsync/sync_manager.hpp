@@ -36,7 +36,7 @@ class SyncManager {
     explicit SyncManager(mdbx::env& db, DataDirectory& data_directory);
 
     //! \brief Runs sync cycles and returns result
-    stages::StageResult void run();
+    stages::StageResult run();
 
     //! \brief Returns the number of stages this instance manages
     [[nodiscard]] size_t size() const { return stages_.size(); }
