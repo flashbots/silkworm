@@ -159,7 +159,7 @@ add_library(evmone evmone/lib/evmone/analysis.cpp
                    evmone/lib/evmone/execution.hpp
                    evmone/lib/evmone/instruction_traits.hpp
                    evmone/lib/evmone/instructions_calls.cpp
-                   evmone/lib/evmone/instructions_op2fn.hpp
+                   evmone/lib/evmone/instructions_impl_map.hpp
                    evmone/lib/evmone/instructions.cpp
                    evmone/lib/evmone/instructions.hpp
                    evmone/lib/evmone/limits.hpp
